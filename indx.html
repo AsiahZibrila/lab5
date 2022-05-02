@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!--leflet css-->
+    <link rel="stylesheet" href="https://d19vzq90twjlae.cloudfront.net/leaflet-0.7/leaflet.css" />
+    <link 
+        rel="stylesheet" 
+        href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"
+    />
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+   integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+   crossorigin=""/>
+   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+   integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+   crossorigin=""></script>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"/>
+   <script>src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"</script>
+
+   <style>
+    #map {
+      height: 400px;
+}
+
+</style>
+
+
+</head>
+<body>
+    <div id="map"></div>
+    <script src="https://d19vzq90twjlae.cloudfront.net/leaflet-0.7/leaflet.js">
+    </script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js">
+    </script>
+    <script>src="https://cdnjs.cloudflare.com/ajax/libs/Turf.js/0.0.124/turf.min.js"</script>
+
+
+    <script>
+        // center of the map
+    var center = [51.0447, -114.0719];
+    
+    // Create the map
+    var map = L.map('map').setView(center, 6);
+    
+    // Set up the OSM layer
+    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+    maxZoom: 18,
+    id: 'mapbox/streets-v11',
+    tileSize: 512,
+    zoomOffset: -1,
+    accessToken: 'pk.eyJ1IjoiYXNpYWh6aWJyaWxhIiwiYSI6ImNremtydHA0djRwZnUyeXByazNtNTU4ZXEifQ.cI1m3_Aze0SOIj9XoiABzw'
+}).addTo(map);
+    
+    // add a marker in the given location
+    L.marker(center).addTo(map);
+    //var mylayer=L.geoJSON();
+
+
+    var drawnItems = new L.FeatureGroup();
+	map.addLayer(drawnItems);
+//define the draw icon;
+    var drawControl = new L.Control.Draw({
+            position: 'topleft',
+            draw:{
+                polyline: {
+					shapeOptions: {
+						color: 'red'
+					},
+
+                    },
+                polygon: false,
+                circle: false,
+                rectangle: false,
+                circlemarker: false,
+                marker: false
+            },
+
+            edit: {
+				featureGroup: drawnItems
+            }
+    });
+    map.addControl(drawControl);
+
+    map.on('draw:created', function (e) {
+			var type = e.layerType,
+				layer = e.layer;
+
+			if (type === 'marker') {
+				layer.bindPopup('A popup!');
+			}
+
+			drawnItems.addLayer(layer);
+		});
+    
+        
+        //var mylayer=L.geoJSON();
+        var geojsonFeature;
+        var coord =[];
+
+        var coord = geojsonFeature.geometry.coordinates;
+
+
+
+        geojsonFeature={
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [coord]
+                    },
+                    "properties": {
+                        "name": "Dinagat Islands"
+                    }
+   }
+
+     var coord = geojsonFeature.geometry.coordinates;
+
+    
+    // Initialise the FeatureGroup to store editable layers
+    /*var LeafIcon = L.Icon.extend({
+                options: {
+                    shadowUrl: 
+                        'http://leafletjs.com/docs/images/leaf-shadow.png',
+                    iconSize:     [38, 95],
+                    shadowSize:   [50, 64],
+                    iconAnchor:   [22, 94],
+                    shadowAnchor: [4, 62],
+                    popupAnchor:  [-3, -76]
+                }
+            });
+    
+            var greenIcon = new LeafIcon({
+                iconUrl: 'http://leafletjs.com/docs/images/leaf-green.png'
+                });
+    
+            var drawnItems = new L.FeatureGroup();
+            map.addLayer(drawnItems);
+    
+            var drawControl = new L.Control.Draw({
+                position: 'topright',
+                draw: {
+                    polygon: {
+                        shapeOptions: {
+                            color: 'purple'
+                        },
+                        allowIntersection: false,
+                        drawError: {
+                            color: 'orange',
+                            timeout: 1000
+                        },
+                        showArea: true,
+                        metric: false,
+                        repeatMode: true
+                    },
+                    polyline: {
+                        shapeOptions: {
+                            color: 'red'
+                        },
+                    },
+                    rect: {
+                        shapeOptions: {
+                            color: 'green'
+                        },
+                    },
+                    circle: {
+                        shapeOptions: {
+                            color: 'steelblue'
+                        },
+                    },
+                    marker: {
+                        icon: greenIcon
+                    },
+                },
+                edit: {
+                    featureGroup: drawnItems
+                }
+            });
+            map.addControl(drawControl);
+    
+            map.on('draw:created', function (e) {
+                var type = e.layerType,
+                    layer = e.layer;
+    
+                if (type === 'marker') {
+                    layer.bindPopup('A popup!');
+                }
+    
+                drawnItems.addLayer(layer);
+            });
+    */
+    </script>
+</body>
+</html>
+
